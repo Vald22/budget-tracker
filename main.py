@@ -4,10 +4,10 @@ from tabulate import tabulate
 import os
 import datetime
 
-FILENAME='tracker.csv'
-MONTH=f'{datetime.datetime.now().strftime('%B')}'
+MONTH=f'{datetime.datetime.now().strftime('%b')}'
 DIRECTORYYEAR=f'{datetime.datetime.now().strftime('%Y')}'
 PARENT='DB'
+FILENAME=f'{PARENT}/{DIRECTORYYEAR}/{MONTH}.csv'
 
 def creazafoldermama():
     try:
@@ -46,9 +46,24 @@ def create_db():
             writer=csv.writer(csvfile,delimiter=',')
             writer.writerow(i for i in header)
 
+def alege_ce_vrei_sa_vezi():
+    print(os.listdir(f'{PARENT}'))
+    try:
+        anul=int(input('Alege anul pe care vrei sa il vezi '))
+        print(os.listdir(f'{PARENT}/{anul}'))
+    except FileNotFoundError:
+        print('Alege un an valid!')
+        return
+    try: 
+        luna=input('Alege luna pe care vrei sa o vezi ')
+        printeaza_tabel(f'{PARENT}/{anul}/{luna.capitalize()}.csv')
+    except FileNotFoundError:
+        print('Alege o luna valida!')
+        return
+
 
 def adauga_in_baza():
-    with open(f'{DIRECTORYYEAR}/{MONTH}.csv','+a') as csvfile:
+    with open(f'{PARENT}/{DIRECTORYYEAR}/{MONTH}.csv','+a') as csvfile:
         new_line=[]
         nume_achititie=input('Ce ai cumparat ?')
         categorie=input('''Alege o categorie: 
@@ -64,8 +79,8 @@ def adauga_in_baza():
         writer=csv.writer(csvfile,delimiter=',')
         writer.writerow([nume_achititie,categorie,data_achizitiei,pret])
 
-def printeaza_tabel():
-    df = pd.read_table(FILENAME, delimiter=",")
+def printeaza_tabel(fisier=FILENAME):
+    df = pd.read_table(fisier, delimiter=",")
     print(tabulate(df,headers=df.head(),tablefmt='fancy_grid'))
 
 
@@ -74,8 +89,9 @@ def meniu_aplicatie():
         alegere=int(input('''Ce doresti sa faci ?
                         1.Creaza baza de date
                         2.Adauga in baza de date
-                        3.Afiseaza baza de date sub forma de tabel
-                        4.Inchide aplicatia
+                        3.Afiseaza luna curenta
+                        4.Alege o luna dintr-un an 
+                        5.Inchide aplicatia
                         '''))
         match alegere:
             case 1:
@@ -85,6 +101,8 @@ def meniu_aplicatie():
             case 3:
                 printeaza_tabel()
             case 4:
+                alege_ce_vrei_sa_vezi()
+            case 5:
                 print('O zi placuta!')
                 break
             case _:
