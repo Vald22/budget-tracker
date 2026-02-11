@@ -62,6 +62,7 @@ def alege_ce_vrei_sa_vezi():
         return
 
 
+
 def adauga_in_baza():
     with open(f'{PARENT}/{DIRECTORYYEAR}/{MONTH}.csv','+a') as csvfile:
         new_line=[]
